@@ -14,6 +14,7 @@ const seed = Number.isInteger(seedParam) ? seedParam : Math.floor(Math.random() 
 const canvas = document.getElementById('game');
 const status = document.getElementById('status');
 const game = createGame(canvas, seed);
+window.__game = game;
 
 function announce(message) { status.textContent = message; }
 

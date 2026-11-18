@@ -818,8 +818,8 @@ export function createGame(canvas, seed) {
     const m = currentMission();
     // Top-left panel: health, cash, ammo, wanted.
     ctx.fillStyle = 'rgba(8,8,20,0.72)';
-    ctx.fillRect(14, 12, 300, 96);
-    ctx.strokeStyle = '#ff2d78'; ctx.lineWidth = 2; ctx.strokeRect(14, 12, 300, 96);
+    ctx.fillRect(14, 12, 300, 112);
+    ctx.strokeStyle = '#ff2d78'; ctx.lineWidth = 2; ctx.strokeRect(14, 12, 300, 112);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#fff'; ctx.font = 'bold 17px sans-serif';
     ctx.fillText('NEON BAY', 26, 34);
@@ -837,7 +837,7 @@ export function createGame(canvas, seed) {
     ctx.font = '22px sans-serif';
     for (let i = 0; i < 5; i++) {
       ctx.fillStyle = i < state.wanted ? '#ff2d2d' : 'rgba(255,255,255,0.25)';
-      ctx.fillText('★', 26 + i * 26, 100 - 4 + 4);
+      ctx.fillText('★', 26 + i * 26, 104);
     }
     // Objective bar.
     ctx.fillStyle = 'rgba(8,8,20,0.72)';
@@ -994,21 +994,25 @@ export function createGame(canvas, seed) {
       state.camX = 1600; state.camY = 1200;
       player.x = 1600; player.y = 1200;
     } else if (name === 'play') {
+      state.missionFlash = 0;
       const car = cars.find((c) => c.type === 'sports');
       if (car) enterCar(car);
       player.car.x = 1150; player.car.y = 700; player.car.angle = 0; player.car.speed = 300;
       state.camX = player.car.x; state.camY = player.car.y;
       state.cash = 1250; state.ammo = 48; state.health = 100;
     } else if (name === 'action') {
+      state.missionFlash = 0;
       const car = cars.find((c) => c.type === 'sports');
       if (car) enterCar(car);
       player.car.x = 1600; player.car.y = 1150; player.car.angle = 0.4; player.car.speed = 380;
       state.camX = player.car.x; state.camY = player.car.y;
       state.wanted = 4; state.heat = 20;
       spawnCopCar(); spawnCopCar();
-      cars.filter((c) => c.driver === 'cop').forEach((c) => { c.x = player.car.x - 260; c.y = player.car.y + 120; c.angle = 0.4; });
-      spawnEnemy(player.car.x + 200, player.car.y - 120);
-      spawnEnemy(player.car.x + 260, player.car.y + 60);
+      const copCars = cars.filter((c) => c.driver === 'cop');
+      if (copCars[0]) { copCars[0].x = player.car.x - 240; copCars[0].y = player.car.y + 130; copCars[0].angle = 0.4; }
+      if (copCars[1]) { copCars[1].x = player.car.x + 300; copCars[1].y = player.car.y - 170; copCars[1].angle = 0.4 + Math.PI; }
+      spawnEnemy(player.car.x + 170, player.car.y - 110);
+      spawnEnemy(player.car.x + 210, player.car.y + 80);
       addParticles(player.car.x + 40, player.car.y, '#ffd76a', 10, 200);
       bullets.push({ x: player.car.x + 30, y: player.car.y, vx: 700, vy: -100, life: 0.5, from: 'player' });
       state.cash = 2340; state.health = 72;
