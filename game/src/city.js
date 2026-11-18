@@ -76,8 +76,8 @@ export function collideBuildings(city, ent, r) {
       ent.y = cy + (dy / d) * r;
     }
   }
-  for (const lm of Object.values(city.landmarks)) {
-    if (lm === city.landmarks.pier) continue;
+  for (const [key, lm] of Object.entries(city.landmarks)) {
+    if (key === 'pier' || key === 'garage') continue; // pier is open water edge, garage is drive-in
     const cx = clamp(ent.x, lm.x, lm.x + lm.w);
     const cy = clamp(ent.y, lm.y, lm.y + lm.h);
     const dx = ent.x - cx; const dy = ent.y - cy;

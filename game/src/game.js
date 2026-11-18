@@ -181,8 +181,8 @@ export function createGame(canvas, seed) {
       const type = types[i % types.length];
       spawnCar(type, s[0], s[1], i % 2 ? 0 : Math.PI / 2, i < 6 ? 'traffic' : 'parked');
     });
-    // The mission sports car at the garage.
-    spawnCar('sports', 620, 1965, -Math.PI / 2, 'parked');
+    // The mission sports car at the garage forecourt (north of the building, clear of it).
+    spawnCar('sports', 640, 1870, -Math.PI / 2, 'parked');
     for (let i = 0; i < 26; i++) {
       const x = randRange(rng, 120, WORLD.w - 120);
       const y = randRange(rng, 120, WORLD.h - 120);
