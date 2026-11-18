@@ -434,6 +434,7 @@ export function createGame(canvas, seed) {
     for (const car of cars) {
       if (car.driver === 'player') continue;
       const t = CAR_TYPES[car.type];
+      if (car.driver !== 'cop' && car.driver !== 'traffic') continue; // parked / abandoned cars stay put
       if (car.driver === 'cop') {
         // Police chase: steer toward the player, ram on contact.
         const target = angleTo(car.x, car.y, px, py);
