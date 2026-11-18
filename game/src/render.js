@@ -122,7 +122,7 @@ export function createRenderer(canvas) {
     }
   }
 
-  function drawCar(car) {
+  function drawCar(car, G) {
     const t = CAR_TYPES[car.type];
     ctx.save();
     ctx.translate(car.x, car.y);
@@ -191,7 +191,8 @@ export function createRenderer(canvas) {
     ctx.restore();
   }
 
-  function drawWorld(G) {
+  function drawWorld(G, opts) {
+    const showHud = !opts || opts.hud !== false;
     const cam = G.camera;
     const shakeX = G.shake > 0 ? (Math.random() - 0.5) * G.shake : 0;
     const shakeY = G.shake > 0 ? (Math.random() - 0.5) * G.shake : 0;
@@ -238,7 +239,7 @@ export function createRenderer(canvas) {
       ctx.lineTo(wp.x + 10, wp.y - 30);
       ctx.closePath(); ctx.fill();
     }
-    for (const car of G.cars) drawCar(car);
+    for (const car of G.cars) drawCar(car, G);
     for (const ped of G.peds) {
       if (ped.dead) continue;
       drawPerson(ped.x, ped.y, ped.angle, ped.color, false, ped.walkPhase);
@@ -284,8 +285,10 @@ export function createRenderer(canvas) {
     }
     // Screen-space HUD and minimap.
     ctx.setTransform(scale, 0, 0, scale, ox, oy);
-    drawHud(G, scale);
-    drawMinimap(G);
+    if (showHud) {
+      drawHud(G, scale);
+      drawMinimap(G);
+    }
   }
 
   function drawHud(G, scale) {
@@ -437,7 +440,7 @@ export function createRenderer(canvas) {
   }
 
   function drawTitle(G, hasSave) {
-    drawWorld(G);
+    drawWorld(G, { hud: false });
     // Dim the world behind the title.
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     const scale = Math.min(canvas.width / VIEW_W, canvas.height / VIEW_H);
@@ -446,14 +449,23 @@ export function createRenderer(canvas) {
     ctx.setTransform(scale, 0, 0, scale, ox, oy);
     ctx.fillStyle = 'rgba(6,8,16,0.62)';
     ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-    text('NEON BAY', VIEW_W / 2, 190, 92, '#ff2e88', 'center', true);
-    text('N E O N   B A Y', VIEW_W / 2, 192, 92, 'rgba(41,230,255,0.5)', 'center', true);
-    text('An open-world crime story — drive, steal, run the city.', VIEW_W / 2, 240, 22, PALETTE.hudText, 'center');
-    text('Five missions. Five wanted stars. One harbour heist.', VIEW_W / 2, 272, 18, PALETTE.hudDim, 'center');
+    text('NEON BAY', VIEW_W / 2, 168, 92, '#ff2e88', 'center', true);
+    text('An open-world crime story — drive, steal, run the city.', VIEW_W / 2, 216, 22, PALETTE.hudText, 'center');
+    text('Five missions. Five wanted stars. One harbour heist.', VIEW_W / 2, 248, 18, PALETTE.hudDim, 'center');
     const lines = hasSave
       ? ['Press ENTER — New Game', 'Press C — Continue your saved run', 'WASD drive · E steal a car · Mouse aim, click to shoot']
       : ['Press ENTER or click — New Game', 'WASD drive · E steal a car · Mouse aim, click to shoot', 'Missions pay cash. The spray shop clears wanted for $200.'];
-    drawPanel(' ', lines, hasSave ? 'ENTER new game · C continue' : 'ENTER to start', '#29e6ff');
+    const w = 760;
+    const h = 60 + lines.length * 32;
+    const x = (VIEW_W - w) / 2;
+    const y = 300;
+    ctx.fillStyle = 'rgba(8,10,18,0.88)';
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = '#29e6ff';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, y, w, h);
+    lines.forEach((line, i) => text(line, VIEW_W / 2, y + 52 + i * 32, 19, PALETTE.hudText, 'center'));
+    text(hasSave ? 'ENTER new game · C continue' : 'ENTER to start', VIEW_W / 2, y + h - 18, 18, '#ffd23f', 'center', true);
   }
 
   function draw(G, screen, hasSave, extra) {

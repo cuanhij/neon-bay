@@ -74,6 +74,12 @@ function runGame() {
   let saveTimer = 0;
   let titleAttract = 0;
 
+  // Small debug hook for automated playtests (read-only state inspection).
+  window.__neonBay = {
+    get state() { return G; },
+    get screen() { return screen; },
+  };
+
   function announce(message) { status.textContent = message; }
 
   function startNew() {

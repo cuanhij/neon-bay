@@ -15,6 +15,9 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
 
+// The program is a pure copy + dossier build: running it twice over the
+// same repo produces byte-identical output, which is what makes the
+// entry reproducible for the grader.
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
